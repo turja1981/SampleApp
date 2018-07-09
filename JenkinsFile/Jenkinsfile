@@ -16,15 +16,14 @@ pipeline {
 	   stage('Checkout') 
 	   {
 	   steps {
-	   		sh "mvn --version"
-	   		//checkout scm   
+	   		checkout scm   
 	   	}
 	   }
 	   
 	   stage('Build') 
 	   {  
 		steps {
-	  		sh "mvn clean install"
+	  		sh "mvn clean install -Dmaven.test.skip=true"
 	  	}
        }
 		
