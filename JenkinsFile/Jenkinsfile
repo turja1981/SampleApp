@@ -1,14 +1,25 @@
-node {
-   echo 'Hello World'
-   stage('Checkout') 
-   {
-   	checkout scm   
-   }
-   stage('Checkout') 
-   {  
-	    withMaven(maven: 'maven')
-	    {
-	  		sh "mvn clean install"
-	  	}
+pipeline {
+	agent any
+	stages 
+	{
+	
+	   stage('Checkout') 
+	   {
+	   steps {
+	   		checkout scm   
+	   	}
+	   }
+	   
+	   stage('Build') 
+	   {  
+			steps   {
+		  		sh "mvn clean install"
+		  	}
+		}
+	   stage('Test') 
+	   { 
+        steps {
+            sh 'mvn test' 
+       }
 	}
 }
