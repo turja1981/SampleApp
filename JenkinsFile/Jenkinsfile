@@ -13,7 +13,10 @@ pipeline {
 		stage('Code Analysis && Build')
 		{
 			steps {
-				withSonarQubeEnv('sonarQB') { sh "mvn clean install -Dmaven.test.skip=true sonar:sonar -Dsonar.login=sonar -Dsonar.password=sonar" }
+				withSonarQubeEnv('sonarQB') { 
+				sh "mvn clean install -Dmaven.test.skip=true sonar:sonar -Dsonar.login=sonar -Dsonar.password=sonar"
+				sh 'sleep 10'
+				 }
 			}
 		}
 		stage("Quality Gate"){
