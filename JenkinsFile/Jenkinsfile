@@ -20,7 +20,7 @@ pipeline {
 		stage('Static Code Analysis && Build')
 		{
 			steps {
-				withSonarQubeEnv('sonarQb') { sh "mvn clean install -Dmaven.test.skip=true sonar:sonar" }
+				 sh "mvn clean install -Dmaven.test.skip=true sonar:sonar" 
 			}
 		}
 		stage("Quality Gate"){
