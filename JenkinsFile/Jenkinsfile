@@ -23,7 +23,7 @@ pipeline {
 	   stage('Static Code Analysis && Build') 
 	   {  
 		steps {
-			withSonarQubeEnv('sonar_7') {
+			withSonarQubeEnv('sonarQb') {
 		  		sh "mvn clean install -Dmaven.test.skip=true sonar:sonar"
 		  		}
 	  		}
