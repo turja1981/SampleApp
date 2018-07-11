@@ -39,9 +39,11 @@ pipeline {
 			/* This builds the actual image; synonymous to
 			 * docker build on the command line */
 			steps {
+			node {
 				def app = docker.build("/home/turja/DevOps/SampleApp/dockerfile/Dockerfile")
 				app.inside { sh 'mvn test' }
 				post { always { junit 'target/surefire-reports/*.xml' } }
+				}
 			}
 		}
 
