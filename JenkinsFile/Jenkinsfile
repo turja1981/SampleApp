@@ -1,53 +1,52 @@
+// this is a DSLD file
+// start off creating a custom DSL Descriptor for your Groovy DSL
+
+// The following snippet adds the 'newProp' to all types that are a subtype of GroovyObjects
+// contribute(currentType(subType('groovy.lang.GroovyObject'))) {
+//   property name : 'newProp', type : String, provider : 'Sample DSL', doc : 'This is a sample.  You should see this in content assist for GroovyObjects: <pre>newProp</pre>'
+// }
 pipeline {
 	agent any
 	tools{
 		maven 'mvn-3.3.9'
 	}
-	stages 
+	stages('JAVA & JS')
 	{
-		stage ('Initialize') {
-            steps {
-                sh '''
+		stage ('Initialize') { steps { sh '''
                     echo "PATH = ${PATH}"
                     echo "M2_HOME = ${M2_HOME}"
-                '''
-            }
-        }
-	   stage('Checkout SCM') 
-	   {
-	   steps {
-	   		checkout scm   
-	   	}
-	   }
-	   
-	   stage('Static Code Analysis && Build') 
-	   {  
-		steps {
-			withSonarQubeEnv('sonarQb') {
-		  		sh "mvn clean install -Dmaven.test.skip=true sonar:sonar"
-		  		}
-	  		}
-       }
+                ''' } }
+		stage('Checkout SCM')
+		{ steps { checkout scm } }
+
+		stage('Static Code Analysis && Build')
+		{
+			steps {
+				withSonarQubeEnv('sonarQb') { sh "mvn clean install -Dmaven.test.skip=true sonar:sonar" }
+			}
+		}
 		stage("Quality Gate"){
 			steps {
-                timeout(time: 1, unit: 'HOURS') {
-                    // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
-                    // true = set pipeline to UNSTABLE, false = don't
-                    // Requires SonarQube Scanner for Jenkins 2.7+
-                    waitForQualityGate abortPipeline: true
-                    }
-			  }
-		}		
-	   stage('QA Test') 
-	   { 
-        steps {
-            sh 'mvn test' 
-        }   
-	      post {
-	        always {
-	            junit 'target/surefire-reports/*.xml'
-	        }
-	     }
-       }
+				timeout(time: 1, unit: 'HOURS') {
+					// Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
+					// true = set pipeline to UNSTABLE, false = don't
+					// Requires SonarQube Scanner for Jenkins 2.7+
+					waitForQualityGate abortPipeline: true
+				}
+			}
+		}
+		stage('Build Docker image') {
+			/* This builds the actual image; synonymous to
+			 * docker build on the command line */
+			steps {
+				app = docker.build("/home/turja/DevOps/SampleApp/dockerfile/Dockerfile")
+			}
+		}
+		stage('QA Test')
+		{
+			
+			steps { app.inside { sh 'mvn test' } }
+			post { always { junit 'target/surefire-reports/*.xml' } }
+		}
 	}
 }
