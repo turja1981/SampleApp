@@ -15,7 +15,7 @@ import com.tcs.SampleApp.bean.Employee;
 public class SampleAppController {
 	 public static ArrayList<Employee> empList = new ArrayList<Employee>();
 
-	@RequestMapping("/")
+	@RequestMapping(value = "/" ,  method  = RequestMethod.GET  )
 	public String index() {
 		System.out.println("Inside Index");
 		return "index.html";
