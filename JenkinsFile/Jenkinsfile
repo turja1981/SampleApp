@@ -7,7 +7,7 @@
 // }
 pipeline {
 	agent any
-
+	tools{ maven 'mvn-3.3.9' }
 	stages
 	{
 		stage ('Initialize') { steps { sh '''
@@ -20,20 +20,19 @@ pipeline {
 		stage('Code Analysis && Build')
 		{
 			steps {
-				withMaven(maven:'mvn-3.3.9'){ sh "mvn clean install -Dmaven.test.skip=true sonar:sonar" }
+				withSonarQubeEnv('sonarQB') { sh "mvn clean install -Dmaven.test.skip=true sonar:sonar" }
 			}
 		}
 		stage("Quality Gate"){
 			steps {
-	
-					timeout(time: 1, unit: 'HOURS') {
-						// Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
-						// true = set pipeline to UNSTABLE, false = don't
-						// Requires SonarQube Scanner for Jenkins 2.7+
-						waitForQualityGate abortPipeline: true
-					}
+				timeout(time: 1, unit: 'HOURS') {
+					// Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
+					// true = set pipeline to UNSTABLE, false = don't
+					// Requires SonarQube Scanner for Jenkins 2.7+
+					waitForQualityGate abortPipeline: true
 				}
-			
+
+			}
 		}
 		stage('Build Docker image') {
 			/* This builds the actual image; synonymous to
@@ -47,5 +46,5 @@ pipeline {
 			}
 		}
 	}
-	
+
 }
