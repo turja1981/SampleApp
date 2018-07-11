@@ -13,21 +13,30 @@ pipeline {
                 '''
             }
         }
-	   stage('Checkout') 
+	   stage('Checkout SCM') 
 	   {
 	   steps {
 	   		checkout scm   
 	   	}
 	   }
 	   
-	   stage('Build') 
+	   stage('Static Code Analysis && Build') 
 	   {  
 		steps {
-	  		sh "mvn clean install -Dmaven.test.skip=true"
+	  		sh "mvn clean install -Dmaven.test.skip=true sonar:sonar"
 	  	}
        }
-		
-	   stage('Test') 
+	    stage("Quality Gate") {
+	        steps {
+	            timeout(time: 1, unit: 'HOURS') {
+	                // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
+	                // true = set pipeline to UNSTABLE, false = don't
+	                // Requires SonarQube Scanner for Jenkins 2.7+
+	                waitForQualityGate abortPipeline: true
+	            }
+	        }
+	    }		
+	   stage('QA Test') 
 	   { 
         steps {
             sh 'mvn test' 
