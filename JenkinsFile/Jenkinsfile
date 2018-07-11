@@ -7,7 +7,6 @@
 // }
 pipeline {
 	agent any
-	tools{ maven 'mvn-3.3.9' }
 	stages
 	{
 		stage ('Initialize') { steps { sh '''
@@ -20,7 +19,7 @@ pipeline {
 		stage('Code Analysis && Build')
 		{
 			steps {
-				withSonarQubeEnv('sonarQb') { sh "mvn clean install -Dmaven.test.skip=true sonar:sonar" }
+				withMaven(maven:'mvn-3.3.9') { sh "mvn clean install -Dmaven.test.skip=true sonar:sonar" }
 			}
 		}
 		stage("Quality Gate"){
