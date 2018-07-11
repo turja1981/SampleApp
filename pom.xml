@@ -42,15 +42,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-		<groupId>org.seleniumhq.selenium</groupId>
-		<artifactId>selenium-chrome-driver</artifactId>
-		<version>2.50.0</version>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-chrome-driver</artifactId>
+			<version>2.50.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
@@ -61,6 +55,12 @@
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
 			<version>6.8</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -90,6 +90,11 @@
 					</suiteXmlFiles>
 				</configuration>
 			</plugin>
+			<plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>3.4.0.905</version>
+            </plugin>			
 		</plugins>
 	</build>
 
