@@ -1,22 +1,22 @@
 pipeline {
 	agent any
 	tools{ maven 'mvn-3.3.9' }
-	stages
-	{
+	stages {
 		stage ('Initialize') { steps { sh '''
                     echo "PATH = ${PATH}"
                     echo "M2_HOME = ${M2_HOME}"
-                ''' } }
+                '''
+			} }
 		stage('Checkout SCM')
-		{ steps { checkout scm } }
+		{ steps { checkout scm
+			} }
 
-		stage('Code Analysis && Build')
-		{
+		stage('Code Analysis && Build') {
 			steps {
-				withSonarQubeEnv('sonarQB') { 
-				sh "mvn clean install -Dmaven.test.skip=true sonar:sonar -Dsonar.login=sonar -Dsonar.password=sonar"
-				sh 'sleep 10'
-				 }
+				withSonarQubeEnv('sonarQB') {
+					sh "mvn clean install -Dmaven.test.skip=true sonar:sonar -Dsonar.login=sonar -Dsonar.password=sonar"
+					sh 'sleep 10'
+				}
 			}
 		}
 		stage("Quality Gate"){
@@ -27,10 +27,19 @@ pipeline {
 					// Requires SonarQube Scanner for Jenkins 2.7+
 					waitForQualityGate abortPipeline: true
 				}
-
 			}
 		}
-		
+		stage('Build Docker image') {
+			/* This builds the actual image; synonymous to
+			 * docker build on the command line */
+			steps {
+				script {
+					def app = docker.build("/home/turja/DevOps/SampleApp/dockerfile/Dockerfile")
+					app.inside { sh 'mvn test' }
+				}
+				post { always { junit 'target/surefire-reports/*.xml'
+					} }
+			}
+		}
 	}
-
 }
