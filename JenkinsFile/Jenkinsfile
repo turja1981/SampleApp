@@ -5,11 +5,8 @@ pipeline {
 		stage ('Initialize') { steps { sh '''
                     echo "PATH = ${PATH}"
                     echo "M2_HOME = ${M2_HOME}"
-                '''
-			} }
-		stage('Checkout SCM')
-		{ steps { checkout scm
-			} }
+                ''' } }
+		stage('Checkout SCM') { steps { checkout scm } }
 
 		stage('Code Analysis && Build') {
 			steps {
@@ -34,8 +31,13 @@ pipeline {
 			 * docker build on the command line */
 			steps {
 				script {
-					def app = docker.build("dev-image" , "/home/turja/DevOps/SampleApp/dockerfile")
-					app.inside { sh 'mvn test' }
+					
+					sh "cp target/*.jar /home/turja/DevOps/SampleApp/dockerfile/"
+					
+					dir "/home/turja/DevOps/SampleApp/dockerfile" .
+					
+					def app = docker.build("dev-image:${env.BUILD_ID}" , "--add-host dhost:8080")
+					//app.inside { sh 'mvn test' }
 				}
 				post { always { junit 'target/surefire-reports/*.xml' } }
 			}
