@@ -36,7 +36,7 @@ pipeline {
 					
 					dir "/home/turja/DevOps/SampleApp/dockerfile" 
 					
-					def app = docker.build("dev-image:${env.BUILD_ID}" , "--add-host dhost:8080")
+					def app = docker.build("dev-image:${env.BUILD_ID}" , "--add-host dhost:10.0.0.2")
 					//app.inside { sh 'mvn test' }
 				}
 				post { always { junit 'target/surefire-reports/*.xml' } }
