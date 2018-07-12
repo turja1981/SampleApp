@@ -34,11 +34,10 @@ pipeline {
 			 * docker build on the command line */
 			steps {
 				script {
-					def app = docker.build("/home/turja/DevOps/SampleApp/dockerfile/Dockerfile")
+					def app = docker.build("dev-image" , "/home/turja/DevOps/SampleApp/dockerfile/Dockerfile")
 					app.inside { sh 'mvn test' }
 				}
-				post { always { junit 'target/surefire-reports/*.xml'
-					} }
+				post { always { junit 'target/surefire-reports/*.xml' } }
 			}
 		}
 	}
