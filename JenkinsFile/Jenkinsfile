@@ -44,7 +44,7 @@ pipeline {
 			post {
 				always {
 					junit 'target/surefire-reports/*.xml' 
-					sh "docker stop dev-image:${env.BUILD_ID}"
+					sh "docker stop dev-image_${env.BUILD_ID}"
 				}
 			}
 		}
