@@ -11,18 +11,8 @@ pipeline {
 		stage('Code Analysis && Build') {
 			steps {
 				withSonarQubeEnv('sonarQB') {
-					sh "mvn clean install -Dmaven.test.skip=true sonar:sonar -Dsonar.login=sonar -Dsonar.password=sonar"
+					sh "mvn clean install -Dmaven.test.skip=true "
 					sh 'sleep 10'
-				}
-			}
-		}
-		stage("Quality Gate"){
-			steps {
-				timeout(time: 1, unit: 'HOURS') {
-					// Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
-					// true = set pipeline to UNSTABLE, false = don't
-					// Requires SonarQube Scanner for Jenkins 2.7+
-					waitForQualityGate abortPipeline: true
 				}
 			}
 		}
