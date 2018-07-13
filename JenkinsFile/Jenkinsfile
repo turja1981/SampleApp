@@ -38,12 +38,11 @@ pipeline {
 			/* This builds the actual image; synonymous to
 			 * docker build on the command line */
 			steps {
-				
-					
-					def DOCKER_IMAGE  =   "dev-image:${env.BUILD_ID}"
-					
-					echo "Docker Image = ${DOCKER_IMAGE}"
+
 					withEnv(['BUILD_ID=dontkill']) {
+						def DOCKER_IMAGE  =   "dev-image:${env.BUILD_ID}"
+						
+						echo "Docker Image = ${DOCKER_IMAGE}"					
 						script {
 							sh "docker run -p8080:8080  ${DOCKER_IMAGE}"
 						}
