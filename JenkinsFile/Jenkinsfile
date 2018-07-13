@@ -29,10 +29,13 @@ pipeline {
 					dir ("/home/turja/DevOps/SampleApp/dockerfile" ) {
 
 						def app = docker.build("dev-image:${env.BUILD_ID}" )
-						app.inside { sh 'mvn test' }						
+					//	app.inside { sh 'mvn test' }						
 					}
 				}
 			}
+			stage ('Run') {
+            	docker.image("dev-image:${env.BUILD_ID}").run('-p 8080:8080')
+        	}			
 		}
 	}
 }
