@@ -39,12 +39,8 @@ pipeline {
 			 * docker build on the command line */
 			steps {
 
-					withEnv(['BUILD_ID=dontkill']) {
-				
-						script {
-							sh "docker run -p8080:8080  dev-image:${env.BUILD_ID}"
-						}
-					//app.inside { sh 'mvn test' }
+				app.inside { sh 'mvn test' }
+					
 				}
 				// post { always { junit 'target/surefire-reports/*.xml' } }
 			}
