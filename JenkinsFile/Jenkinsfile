@@ -40,11 +40,9 @@ pipeline {
 			steps {
 
 					withEnv(['BUILD_ID=dontkill']) {
-						def DOCKER_IMAGE  =   "dev-image:${env.BUILD_ID}"
-						
-						echo "Docker Image = ${DOCKER_IMAGE}"					
+				
 						script {
-							sh "docker run -p8080:8080  ${DOCKER_IMAGE}"
+							sh "docker run -p8080:8080  dev-image:${env.BUILD_ID}"
 						}
 					//app.inside { sh 'mvn test' }
 				}
