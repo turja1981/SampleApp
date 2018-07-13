@@ -68,8 +68,10 @@ pipeline {
 			 * Second, the 'latest' tag.
 			 * Pushing multiple tags is cheap, as all the layers are reused. */
 			steps{
-				app.push("${env.BUILD_ID}")
-				app.push("latest")
+				script{
+					app.push("${env.BUILD_ID}")
+					app.push("latest")
+					}
 			}
 		}
 	}
