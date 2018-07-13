@@ -5,8 +5,10 @@ pipeline {
 		stage ('Initialize') { steps { sh '''
                     echo "PATH = ${PATH}"
                     echo "M2_HOME = ${M2_HOME}"
-                ''' } }
-		stage('Checkout SCM') { steps { checkout scm } }
+                '''
+			} }
+		stage('Checkout SCM') { steps { checkout scm
+			} }
 
 		stage('Code Analysis && Build') {
 			steps {
@@ -35,8 +37,9 @@ pipeline {
 			/* This builds the actual image; synonymous to
 			 * docker build on the command line */
 			steps {
-
-				app.inside { sh 'mvn test' }
+				script {
+					app.inside { sh 'mvn test' }
+				}
 			}
 			// post { always { junit 'target/surefire-reports/*.xml' } }
 		}
