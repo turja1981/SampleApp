@@ -5,10 +5,8 @@ pipeline {
 		stage ('Initialize') { steps { sh '''
                     echo "PATH = ${PATH}"
                     echo "M2_HOME = ${M2_HOME}"
-                '''
-			} }
-		stage('Checkout SCM') { steps { checkout scm
-			} }
+                ''' } }
+		stage('Checkout SCM') { steps { checkout scm } }
 
 		stage('Code Analysis && Build') {
 			steps {
@@ -35,7 +33,9 @@ pipeline {
 			}
 		}
 		stage ('Run') {
-			docker.image("dev-image:${env.BUILD_ID}").run('-p 8080:8080')
+			steps {
+				docker.image("dev-image:${env.BUILD_ID}").run('-p 8080:8080')
+			}
 		}
 	}
 }
