@@ -44,7 +44,7 @@ pipeline {
 					
 					echo "Docker Image = ${DOCKER_IMAGE}"
 					
-					sh "docker run -p8080:8080  ${DOCKER_IMAGE}"
+					sh "nohup docker run -p8080:8080  ${DOCKER_IMAGE}"
 					
 					//app.inside { sh 'mvn test' }
 				}
