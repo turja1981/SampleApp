@@ -69,9 +69,11 @@ pipeline {
 			 * Pushing multiple tags is cheap, as all the layers are reused. */
 			steps{
 				script{
+				docker.withRegistry('https://hub.docker.com/r/turja/devops_poc/', 'docker_hub_id') {
 					app.push("${env.BUILD_ID}")
 					app.push("latest")
 					}
+				}
 			}
 		}
 	}
