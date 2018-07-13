@@ -38,14 +38,15 @@ pipeline {
 			/* This builds the actual image; synonymous to
 			 * docker build on the command line */
 			steps {
-				script {
+				
 					
-					DOCKER_IMAGE  =   "dev-image:${env.BUILD_ID}"
+					def DOCKER_IMAGE  =   "dev-image:${env.BUILD_ID}"
 					
 					echo "Docker Image = ${DOCKER_IMAGE}"
-					
-					sh "nohup docker run -p8080:8080  ${DOCKER_IMAGE}"
-					
+					withEnv(['BUILD_ID=dontkill']) {
+						script {
+							sh "docker run -p8080:8080  ${DOCKER_IMAGE}"
+						}
 					//app.inside { sh 'mvn test' }
 				}
 				// post { always { junit 'target/surefire-reports/*.xml' } }
