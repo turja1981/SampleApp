@@ -11,8 +11,18 @@ pipeline {
 		stage('Code Analysis && Build') {
 			steps {
 				withSonarQubeEnv('sonarQB') {
-					sh "mvn clean install -Dmaven.test.skip=true"
+					sh "mvn clean install -Dmaven.test.skip=true sonar:sonar -Dsonar.login=sonar -Dsonar.password=sonar"
 					sh 'sleep 10'
+				}
+			}
+		}
+		stage("Quality Gate"){
+			steps {
+				timeout(time: 1, unit: 'HOURS') {
+					// Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
+					// true = set pipeline to UNSTABLE, false = don't
+					// Requires SonarQube Scanner for Jenkins 2.7+
+					waitForQualityGate abortPipeline: true
 				}
 			}
 		}
@@ -27,11 +37,28 @@ pipeline {
 					dir ("/home/turja/DevOps/SampleApp/dockerfile" )
 					{
 					
-						def app = docker.build("dev-image:${env.BUILD_ID}" )
+						def app = docker.build("dev-image:${env.BUILD_ID}" , "--add-host dhost:10.0.0.2")
 					}
+					
+				}
+				
+			}
+		}
+		stage('Run Docker image') {
+			/* This builds the actual image; synonymous to
+			 * docker build on the command line */
+			steps {
+				script {
+					
+					DOCKER_IMAGE  =   "dev-image:${env.BUILD_ID}"
+					
+					echo "Docker Image = ${DOCKER_IMAGE}"
+					
+					sh "sh  docker run -p8080:8080  ${DOCKER_IMAGE}"
+					
 					//app.inside { sh 'mvn test' }
 				}
-				//post { always { junit 'target/surefire-reports/*.xml' } }
+				// post { always { junit 'target/surefire-reports/*.xml' } }
 			}
 		}
 	}
