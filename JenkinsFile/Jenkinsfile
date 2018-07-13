@@ -1,12 +1,22 @@
 pipeline {
 	agent any
-	tools{ maven 'mvn-3.3.9' }
+	tools{
+		maven 'mvn-3.3.9'
+	}
 	stages {
-		stage ('Initialize') { steps { sh '''
+		stage ('Initialize') {
+			steps {
+				sh '''
                     echo "PATH = ${PATH}"
                     echo "M2_HOME = ${M2_HOME}"
-                ''' } }
-		stage('Checkout SCM') { steps { checkout scm } }
+                '''
+			}
+		}
+		stage('Checkout SCM') {
+			steps {
+				checkout scm
+			}
+		}
 
 		stage('Code Analysis && Build') {
 			steps {
@@ -40,24 +50,28 @@ pipeline {
 			}
 		}
 		stage('Unit & QA Testing') {
-			steps { script{ sh "mvn test " } }
+			steps {
+				script{
+					sh "mvn test "
+				}
+			}
 			post {
 				always {
-					junit 'target/surefire-reports/*.xml' 
+					junit 'target/surefire-reports/*.xml'
 					sh "docker stop dev-image_${env.BUILD_ID}"
 				}
 			}
 		}
-	    stage('Push Docker Image') {
-	        /* Finally, we'll push the image with two tags:
-	         * First, the incremental build number from Jenkins
-	         * Second, the 'latest' tag.
-	         * Pushing multiple tags is cheap, as all the layers are reused. */
-	        steps{
-	            app.push("${env.BUILD_ID}")
-	            app.push("latest")
-	        }		
+		stage('Push Docker Image') {
+			/* Finally, we'll push the image with two tags:
+			 * First, the incremental build number from Jenkins
+			 * Second, the 'latest' tag.
+			 * Pushing multiple tags is cheap, as all the layers are reused. */
+			steps{
+				app.push("${env.BUILD_ID}")
+				app.push("latest")
+			}
+		}
 	}
 }
-
 
