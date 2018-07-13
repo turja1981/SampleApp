@@ -34,7 +34,9 @@ pipeline {
 		}
 		stage ('Run') {
 			steps {
-				docker.image("dev-image:${env.BUILD_ID}").run('-p 8080:8080')
+			script {
+				dapp = docker.image("dev-image:${env.BUILD_ID}").run('-p 8080:8080')
+				}
 			}
 		}
 	}
